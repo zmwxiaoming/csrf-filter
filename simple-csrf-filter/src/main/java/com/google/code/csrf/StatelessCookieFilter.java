@@ -31,7 +31,10 @@ public class StatelessCookieFilter implements Filter {
 			String token = Long.toString(random.nextLong(), 36);
 			LOG.debug("new csrf token generated: {}", token);
 			httpReq.setAttribute(csrfTokenName, token);
-			httpResp.addCookie(new Cookie(csrfTokenName, token));
+			Cookie cookie = new Cookie(csrfTokenName, token);
+			cookie.setPath("/");
+			cookie.setMaxAge(3600);
+			httpResp.addCookie(cookie);
 			chain.doFilter(req, resp);
 			return;
 		}
@@ -42,6 +45,7 @@ public class StatelessCookieFilter implements Filter {
 			httpResp.sendError(400);
 			return;
 		}
+		httpReq.setAttribute(csrfTokenName, csrfToken);
 
 		for (Cookie curCookie : httpReq.getCookies()) {
 			if (curCookie.getName().equals(csrfTokenName)) {

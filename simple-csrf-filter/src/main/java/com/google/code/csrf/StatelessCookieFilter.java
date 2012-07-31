@@ -51,6 +51,7 @@ public class StatelessCookieFilter implements Filter {
 				} else {
 					LOG.error("mismatched csrf token. expected: {} received: {}", csrfToken, curCookie.getValue());
 					httpResp.sendError(400);
+					return;
 				}
 			}
 		}

@@ -2,7 +2,10 @@ package com.google.code.csrf;
 
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -20,8 +23,10 @@ import org.slf4j.LoggerFactory;
 public class StatelessCookieFilter implements Filter {
 
 	private final static Logger LOG = LoggerFactory.getLogger(StatelessCookieFilter.class);
+	private final static Pattern COMMA = Pattern.compile(",");
 
 	private String csrfTokenName;
+	private Set<String> excludeURLs;
 	private Random random;
 
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
@@ -35,6 +40,11 @@ public class StatelessCookieFilter implements Filter {
 			cookie.setPath("/");
 			cookie.setMaxAge(3600);
 			httpResp.addCookie(cookie);
+			chain.doFilter(req, resp);
+			return;
+		}
+
+		if( excludeURLs.contains(httpReq.getServletPath()) ) {
 			chain.doFilter(req, resp);
 			return;
 		}
@@ -59,7 +69,7 @@ public class StatelessCookieFilter implements Filter {
 				}
 			}
 		}
-		
+
 		LOG.error("csrf cookie not found");
 		httpResp.sendError(400);
 	}
@@ -74,6 +84,16 @@ public class StatelessCookieFilter implements Filter {
 			throw new ServletException("csrfTokenName parameter should be specified");
 		}
 		csrfTokenName = value;
+		String excludedURLsStr = config.getInitParameter("exclude");
+		if (excludedURLsStr != null) {
+			String[] parts = COMMA.split(excludedURLsStr);
+			excludeURLs = new HashSet<String>(parts.length);
+			for (String cur : parts) {
+				excludeURLs.add(cur);
+			}
+		} else {
+			excludeURLs = new HashSet<String>(0);
+		}
 		random = new SecureRandom();
 	}
 

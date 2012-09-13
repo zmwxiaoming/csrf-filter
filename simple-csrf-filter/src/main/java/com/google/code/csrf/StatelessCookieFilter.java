@@ -27,12 +27,18 @@ public class StatelessCookieFilter implements Filter {
 
 	private String csrfTokenName;
 	private Set<String> excludeURLs;
+	private Set<String> excludeFormURLs;
 	private Random random;
 
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest httpReq = (HttpServletRequest) req;
 		HttpServletResponse httpResp = (HttpServletResponse) resp;
+		
 		if (!httpReq.getMethod().equals("POST")) {
+			if( excludeFormURLs.contains(httpReq.getServletPath()) ) {
+				chain.doFilter(req, resp);
+				return;
+			}
 			String token = Long.toString(random.nextLong(), 36);
 			LOG.debug("new csrf token generated: {}", token);
 			httpReq.setAttribute(csrfTokenName, token);
@@ -93,6 +99,16 @@ public class StatelessCookieFilter implements Filter {
 			}
 		} else {
 			excludeURLs = new HashSet<String>(0);
+		}
+		String excludedFormURLsStr = config.getInitParameter("excludeGET");
+		if( excludedFormURLsStr != null ) {
+			String[] parts = COMMA.split(excludedFormURLsStr);
+			excludeFormURLs = new HashSet<String>(parts.length);
+			for( String cur : parts ) {
+				excludeFormURLs.add(cur);
+			}
+		} else {
+			excludeFormURLs = new HashSet<String>(0);
 		}
 		random = new SecureRandom();
 	}

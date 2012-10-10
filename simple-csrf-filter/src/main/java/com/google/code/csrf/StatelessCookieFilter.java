@@ -66,11 +66,13 @@ public class StatelessCookieFilter implements Filter {
 			String token = Long.toString(random.nextLong(), 36);
 			LOG.debug("new csrf token generated: {}", token);
 			req.setAttribute(csrfTokenName, token);
+
+			chain.doFilter(req, resp);
+
 			Cookie cookie = new Cookie(csrfTokenName, token);
 			cookie.setPath("/");
 			cookie.setMaxAge(3600);
 			resp.addCookie(cookie);
-			chain.doFilter(req, resp);
 			return;
 		}
 
@@ -82,7 +84,9 @@ public class StatelessCookieFilter implements Filter {
 		String csrfToken = req.getParameter(csrfTokenName);
 		if (csrfToken == null) {
 			LOG.error("csrf token not found in POST request: {}", req);
-			resp.sendError(400);
+			if (!resp.isCommitted()) {
+				resp.sendError(400);
+			}
 			return;
 		}
 		req.setAttribute(csrfTokenName, csrfToken);
@@ -94,14 +98,18 @@ public class StatelessCookieFilter implements Filter {
 					return;
 				} else {
 					LOG.error("mismatched csrf token. expected: {} received: {}", csrfToken, curCookie.getValue());
-					resp.sendError(400);
+					if (!resp.isCommitted()) {
+						resp.sendError(400);
+					}
 					return;
 				}
 			}
 		}
 
 		LOG.error("csrf cookie not found");
-		resp.sendError(400);
+		if (!resp.isCommitted()) {
+			resp.sendError(400);
+		}
 	}
 
 	public void destroy() {

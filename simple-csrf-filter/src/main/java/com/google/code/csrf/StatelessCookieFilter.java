@@ -66,13 +66,11 @@ public class StatelessCookieFilter implements Filter {
 			String token = Long.toString(random.nextLong(), 36);
 			LOG.debug("new csrf token generated: {}", token);
 			req.setAttribute(csrfTokenName, token);
-
-			chain.doFilter(req, resp);
-
 			Cookie cookie = new Cookie(csrfTokenName, token);
 			cookie.setPath("/");
 			cookie.setMaxAge(3600);
 			resp.addCookie(cookie);
+			chain.doFilter(req, resp);
 			return;
 		}
 

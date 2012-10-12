@@ -48,7 +48,6 @@ public class StatelessCookieFilter implements Filter {
 				httpReq.removeAttribute(oncePerRequestAttributeName);
 			}
 		}
-		doFilterInternal(httpReq, httpResp, chain);
 	}
 
 	private void doFilterInternal(HttpServletRequest req, HttpServletResponse resp, FilterChain chain) throws IOException, ServletException {

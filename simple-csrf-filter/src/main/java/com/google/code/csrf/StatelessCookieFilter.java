@@ -134,7 +134,7 @@ public class StatelessCookieFilter implements Filter {
 			String[] parts = COMMA.split(excludedFormURLsStr);
 			excludeFormURLs = new HashSet<String>(parts.length);
 			for (String cur : parts) {
-				excludeFormURLs.add(cur);
+				excludeFormURLs.add(cur.trim());
 			}
 		} else {
 			excludeFormURLs = new HashSet<String>(0);
@@ -144,7 +144,7 @@ public class StatelessCookieFilter implements Filter {
 			String[] parts = COMMA.split(excludeStartWithURLsStr);
 			excludeStartWithURLs = new ArrayList<String>(parts.length);
 			for (String curPart : parts) {
-				excludeStartWithURLs.add(curPart);
+				excludeStartWithURLs.add(curPart.trim());
 			}
 		} else {
 			excludeStartWithURLs = new ArrayList<String>(0);

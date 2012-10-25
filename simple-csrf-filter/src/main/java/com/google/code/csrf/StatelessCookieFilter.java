@@ -63,7 +63,7 @@ public class StatelessCookieFilter implements Filter {
 				}
 			}
 			String token = Long.toString(random.nextLong(), 36);
-			LOG.debug("new csrf token generated: {}", token);
+			LOG.debug("new csrf token generated: {} path: {}", token, req.getServletPath());
 			req.setAttribute(csrfTokenName, token);
 			Cookie cookie = new Cookie(csrfTokenName, token);
 			cookie.setPath("/");

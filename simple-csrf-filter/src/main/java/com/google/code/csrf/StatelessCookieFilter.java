@@ -103,7 +103,7 @@ public class StatelessCookieFilter implements Filter {
 			}
 		}
 
-		LOG.error("csrf cookie not found");
+		LOG.error("csrf cookie not found at: {}", req.getServletPath());
 		if (!resp.isCommitted()) {
 			resp.sendError(400);
 		}

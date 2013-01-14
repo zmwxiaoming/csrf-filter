@@ -29,6 +29,7 @@ public class StatelessCookieFilter implements Filter {
 
 	private String csrfTokenName;
 	private String oncePerRequestAttributeName;
+	private int cookieMaxAge;
 	private Set<String> excludeURLs;
 	private List<String> excludeStartWithURLs;
 	private Set<String> excludeFormURLs;
@@ -67,7 +68,7 @@ public class StatelessCookieFilter implements Filter {
 			req.setAttribute(csrfTokenName, token);
 			Cookie cookie = new Cookie(csrfTokenName, token);
 			cookie.setPath("/");
-			cookie.setMaxAge(3600);
+			cookie.setMaxAge(cookieMaxAge);
 			resp.addCookie(cookie);
 			chain.doFilter(req, resp);
 			return;
@@ -148,6 +149,16 @@ public class StatelessCookieFilter implements Filter {
 			}
 		} else {
 			excludeStartWithURLs = new ArrayList<String>(0);
+		}
+		String cookieMaxAgeStr = config.getInitParameter("cookieMaxAge");
+		if (cookieMaxAgeStr != null) {
+			try {
+				cookieMaxAge = Integer.parseInt(cookieMaxAgeStr);
+			} catch (NumberFormatException nfe) {
+				throw new ServletException("cookieMaxAge must be an integer: " + cookieMaxAgeStr, nfe);
+			}
+		} else {
+			cookieMaxAge = 3600; // 60*60 seconds = 1 hour
 		}
 		oncePerRequestAttributeName = getFirstTimeAttributeName();
 		random = new SecureRandom();

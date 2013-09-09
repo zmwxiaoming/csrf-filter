@@ -81,7 +81,7 @@ public class StatelessCookieFilter implements Filter {
 
 		String csrfToken = req.getParameter(csrfTokenName);
 		if (csrfToken == null) {
-			LOG.error("csrf token not found in POST request: {}", req.getServletPath());
+			LOG.info("csrf token not found in POST request: {}", req.getServletPath());
 			if (!resp.isCommitted()) {
 				resp.sendError(400);
 			}
@@ -95,7 +95,7 @@ public class StatelessCookieFilter implements Filter {
 					chain.doFilter(req, resp);
 					return;
 				} else {
-					LOG.error("mismatched csrf token. expected: {} received: {} path: {}", new Object[] { csrfToken, curCookie.getValue(), req.getServletPath() });
+					LOG.info("mismatched csrf token. expected: {} received: {} path: {}", new Object[] { csrfToken, curCookie.getValue(), req.getServletPath() });
 					if (!resp.isCommitted()) {
 						resp.sendError(400);
 					}
@@ -104,7 +104,7 @@ public class StatelessCookieFilter implements Filter {
 			}
 		}
 
-		LOG.error("csrf cookie not found at: {}", req.getServletPath());
+		LOG.info("csrf cookie not found at: {}", req.getServletPath());
 		if (!resp.isCommitted()) {
 			resp.sendError(400);
 		}

@@ -29,7 +29,7 @@ Compare to others
 There is another csrf filter: https://github.com/esheri3/OWASP-CSRFGuard
 
 Here is why this filter is better:
-  * it is simple. Really simple. No need to read <a href="https://www.owasp.org/index.php/CSRFGuard_3_Configuration>100+ lines</a> on how to configure it
+  * it is simple. Really simple. No need to read [100+ lines!](https://www.owasp.org/index.php/CSRFGuard_3_Configuration) on how to configure it
   * it is stateles or no memory overhead on sessions. Since CSRFGuard always stores token in sesssion it automatically increases overall memory usage. More clients more memory.
   * it is single ~75 lines file. CSRFGuard has its own logging, own abstract token generation factory. It has more than 17 files. More files more chances to have bug in them.
   * this filter has maven repository with sources and checksums

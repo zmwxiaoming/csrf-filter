@@ -24,9 +24,10 @@ Features
   * it adds attribute into every !HttpServletRequest. 
 
 Compare to others
------
+-----------------
 
 There is another csrf filter: https://github.com/esheri3/OWASP-CSRFGuard
+
 Here is why this filter is better:
   * it is simple. Really simple. No need to read <a href="https://www.owasp.org/index.php/CSRFGuard_3_Configuration>100+ lines</a> on how to configure it
   * it is stateles or no memory overhead on sessions. Since CSRFGuard always stores token in sesssion it automatically increases overall memory usage. More clients more memory.
@@ -86,8 +87,8 @@ HowTo
 	</form>
 ```
 
-
-= Installation =
+Installation
+------------
 
   * Add maven repository:
 ```
@@ -106,4 +107,3 @@ HowTo
 		<version>2.6</version>		
 	</dependency>
 ```
-
